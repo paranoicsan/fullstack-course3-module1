@@ -6,9 +6,9 @@ Mongo::Logger.logger.level = ::Logger::INFO
 
 describe Solution do
   subject(:solution) { Solution.new }
-  let!(:MONGO_URL) { 'mongodb://localhost:27017' }
-  let!(:MONGO_DATABASE ) { 'test' }
-  let!(:RACE_COLLECTION ) { 'race1' }
+  MONGO_URL = 'mongodb://localhost:27017'
+  MONGO_DATABASE = 'test'
+  RACE_COLLECTION = 'race1'
 
   before :all do
     $continue = true
@@ -16,8 +16,8 @@ describe Solution do
 
   around :each do |example|
     if $continue
-      $continue = false 
-      example.run 
+      $continue = false
+      example.run
       $continue = true unless example.exception
     else
       example.skip
@@ -25,9 +25,9 @@ describe Solution do
   end
 
   before :all do
-    client = Mongo::Client.new(ENV['MONGO_URL'] ||= MONGO_URL)
-    db = client.use(ENV['MONGO_DATABASE'] ||= MONGO_DATABASE) 
-    @race_col = db[ENV['RACE_COLLECTION'] ||= RACE_COLLECTION] 
+    client = Mongo::Client.new(ENV['MONGO_URL'] || MONGO_URL)
+    db = client.use(ENV['MONGO_DATABASE'] || MONGO_DATABASE)
+    @race_col = db[ENV['RACE_COLLECTION'] || RACE_COLLECTION]
   end
 
 
@@ -45,7 +45,7 @@ describe Solution do
       counter = 0
       base_list = @race_col.find
       base_list.each do |val|
-        if val[:secs] != nil && val[:secs] > min && val[:secs] < max 
+        if val[:secs] != nil && val[:secs] > min && val[:secs] < max
           counter = counter + 1
         end
       end
@@ -56,7 +56,7 @@ describe Solution do
         expect(r[:secs]).to be < max
       end
     end
-  end 
+  end
 
   context "rq02" do
     it "Solution implements instance method find_by_letter" do
@@ -80,7 +80,7 @@ describe Solution do
       expect(sol_results.count).to be <= 1000
       expect(sol_results.count).to eq(counter)
       cur_name = letter
-      sol_results.each { |r| 
+      sol_results.each { |r|
         expect(r[:last_name].upcase).to start_with(letter)
         expect(r[:last_name].upcase).to be >= cur_name
         cur_name = r[:last_name].upcase

@@ -6,9 +6,9 @@ Mongo::Logger.logger.level = ::Logger::INFO
 
 describe Solution do
   subject(:solution) { Solution.new }
-  let!(:MONGO_URL) { 'mongodb://localhost:27017' }
-  let!(:MONGO_DATABASE ) { 'test' }
-  let!(:RACE_COLLECTION ) { 'race1' }
+  MONGO_URL = 'mongodb://localhost:27017'
+  MONGO_DATABASE = 'test'
+  RACE_COLLECTION = 'race1'
 
   before :all do
     $continue = true
@@ -16,8 +16,8 @@ describe Solution do
 
   around :each do |example|
     if $continue
-      $continue = false 
-      example.run 
+      $continue = false
+      example.run
       $continue = true unless example.exception
     else
       example.skip
@@ -25,9 +25,9 @@ describe Solution do
   end
 
   before :all do
-    client = Mongo::Client.new(ENV['MONGO_URL'] ||= MONGO_URL)
-    db = client.use(ENV['MONGO_DATABASE'] ||= MONGO_DATABASE) 
-    @race_col = db[ENV['RACE_COLLECTION'] ||= RACE_COLLECTION] 
+    client = Mongo::Client.new(ENV['MONGO_URL'] || MONGO_URL)
+    db = client.use(ENV['MONGO_DATABASE'] || MONGO_DATABASE)
+    @race_col = db[ENV['RACE_COLLECTION'] || RACE_COLLECTION]
   end
 
   # test for presence of instance method clear_collection
@@ -53,7 +53,7 @@ describe Solution do
       # confirm object in mongo has updated fields
       expect(@race_col.find(_id: hval[:_id]).first).to eq(hval)
     end
-  end 
+  end
 
   context "rq02" do
     it "Solution implements an instance method called add_time" do
@@ -71,5 +71,5 @@ describe Solution do
       expect(item.first.keys).to_not include(:_id, :first_name, :last_name, :gender, :group, :secs)
       expect(@race_col.find(number:300).first[:secs]).to eq(orig_time + delta)
     end
-  end   
+  end
 end

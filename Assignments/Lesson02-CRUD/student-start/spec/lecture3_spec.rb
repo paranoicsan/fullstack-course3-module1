@@ -6,9 +6,9 @@ Mongo::Logger.logger.level = ::Logger::INFO
 
 describe Solution do
   subject(:solution) { Solution.new }
-  let!(:MONGO_URL) { 'mongodb://localhost:27017' }
-  let!(:MONGO_DATABASE ) { 'test' }
-  let!(:RACE_COLLECTION ) { 'race1' }
+  MONGO_URL = 'mongodb://localhost:27017'
+  MONGO_DATABASE = 'test'
+  RACE_COLLECTION = 'race1'
 
   before :all do
     $continue = true
@@ -16,8 +16,8 @@ describe Solution do
 
   around :each do |example|
     if $continue
-      $continue = false 
-      example.run 
+      $continue = false
+      example.run
       $continue = true unless example.exception
     else
       example.skip
@@ -25,9 +25,9 @@ describe Solution do
   end
 
   before :each do
-    client = Mongo::Client.new(ENV['MONGO_URL'] ||= MONGO_URL)
-    db = client.use(ENV['MONGO_DATABASE'] ||= MONGO_DATABASE) 
-    @race_col = db[ENV['RACE_COLLECTION'] ||= RACE_COLLECTION] 
+    client = Mongo::Client.new(ENV['MONGO_URL'] || MONGO_URL)
+    db = client.use(ENV['MONGO_DATABASE'] || MONGO_DATABASE)
+    @race_col = db[ENV['RACE_COLLECTION'] || RACE_COLLECTION]
     @limit = 50
     @offset = 10
     @group = "20 to 20"
@@ -35,7 +35,7 @@ describe Solution do
   end
 
   # helper method that will load a file and return a parsed JSON document as a hash
-  def load_hash(file_path) 
+  def load_hash(file_path)
     file=File.read(file_path)
     JSON.parse(file)
   end
@@ -68,14 +68,14 @@ describe Solution do
         expect(r[:secs]).to_not be_nil
         expect(r[:secs]).to be >= current_time
         current_time = r[:secs]
-        counter = counter + 1        
+        counter = counter + 1
       end
       expect(counter).to eq(@limit)
-    end 
-    it "supports offsets in gathering results" do 
+    end
+    it "supports offsets in gathering results" do
       # get all results and then count off offset, items should be same
       test_values = solution.find_group_results(@group, 0, @limit).to_a
       expect(test_values[@offset]).to eq(@sol_results.first)
     end
-  end 
+  end
 end

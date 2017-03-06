@@ -1,4 +1,4 @@
-require_relative "../assignment"
+require_relative '../assignment'
 require 'rspec'
 require 'mongo'
 
@@ -6,9 +6,10 @@ Mongo::Logger.logger.level = ::Logger::INFO
 
 describe Solution do
   subject(:solution) { Solution.new }
-  let!(:MONGO_URL) { 'mongodb://localhost:27017' }
-  let!(:MONGO_DATABASE ) { 'test' }
-  let!(:RACE_COLLECTION ) { 'race1' }
+
+  MONGO_URL = 'mongodb://localhost:27017'
+  MONGO_DATABASE = 'test'
+  RACE_COLLECTION = 'race1'
 
   before :all do
     $continue = true
@@ -16,8 +17,8 @@ describe Solution do
 
   around :each do |example|
     if $continue
-      $continue = false 
-      example.run 
+      $continue = false
+      example.run
       $continue = true unless example.exception
     else
       example.skip
@@ -25,15 +26,14 @@ describe Solution do
   end
 
   before :each do
-    client = Mongo::Client.new(ENV['MONGO_URL'] ||= MONGO_URL)
-    db = client.use(ENV['MONGO_DATABASE'] ||= MONGO_DATABASE) 
-    @race_col = db[ENV['RACE_COLLECTION'] ||= RACE_COLLECTION] 
+    client = Mongo::Client.new(ENV['MONGO_URL'] || MONGO_URL)
+    db = client.use(ENV['MONGO_DATABASE'] || MONGO_DATABASE)
+    @race_col = db[ENV['RACE_COLLECTION'] || RACE_COLLECTION]
   end
 
   # helper method that will load a file and return a parsed JSON document as a hash
-  def load_hash(file_path) 
-    file=File.read(file_path)
-    JSON.parse(file)
+  def load_hash(file_path)
+    JSON.parse(File.read file_path)
   end
 
   # test for presence of instance method clear_collection
@@ -51,7 +51,7 @@ describe Solution do
       expect(mongo_result).to be_a(Mongo::Operation::Result)
       expect(@race_col.find.count).to eq(0)
     end
-  end 
+  end
 
   # test for presence of instance method load_collection
   context "rq02" do
@@ -65,7 +65,7 @@ describe Solution do
       expect(mongo_result).to be_a(Mongo::BulkWrite::Result)
       expect(@race_col.find.count).to be > 0
     end
-  end 
+  end
 
   # test for presence of instance method insert
   context "rq03" do
@@ -79,6 +79,6 @@ describe Solution do
       expect(@race_col.find.count).to eq(total + 1)
       expect(mongo_result).to be_a(Mongo::Operation::Result)
     end
-  end 
-  
+  end
+
 end
